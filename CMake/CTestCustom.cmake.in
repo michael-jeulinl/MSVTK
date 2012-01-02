@@ -55,7 +55,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.*warn_unused_result"
   "VTK.*Filtering.*cxx"
   "VTK.*IO.*cxx"
+  "VTK.*Widgets.*cxx"
   "VTK.*Infovis.*cxx"
+  "VTK.*"
 
   # qt suppressions from vtk...
   # Some VTK dashboards include building bits of Qt which produce lots of
@@ -75,5 +77,8 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "ld: warning: duplicate dylib.*"
 
   # Visual studio spurious warnings...
+  "Microsoft SDKs."
+  "VC.include."
   "The following environment variables were not found"
+  "This function or variable may be unsafe. Consider using strcpy_s instead."
   )

@@ -19,7 +19,6 @@ set(msv${KIT}_UI_SRCS
   )
 
 set(msv${KIT}_QRC
-  Resources/msvQECG.qrc
   )
 
 QT4_WRAP_CPP(msv${KIT}_SRCS ${msv${KIT}_MOC_SRCS})
