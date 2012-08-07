@@ -39,6 +39,7 @@ set(include_dirs
   ${VTK_INCLUDE_DIRS}
   ${CTK_INCLUDE_DIRS}
   ${msvVTKParallel_INCLUDE_DIRS}
+  ${msvVTKRendering_INCLUDE_DIRS}
   ${msvVTKWidgets_INCLUDE_DIRS}
   ${msvQtWidgets_INCLUDE_DIRS}
   )
@@ -60,6 +61,7 @@ target_link_libraries(msv${KIT}
   ${CTK_LIBRARIES}
   ${VTK_LIBRARIES}
   msvVTKParallel
+  msvVTKRendering
   msvVTKWidgets
   msvQtWidgets
   )

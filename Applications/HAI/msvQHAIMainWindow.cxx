@@ -26,7 +26,7 @@
 #include "msvVTKXMLMultiblockLODReader.h"
 #include "ui_msvQHAIMainWindow.h"
 #include "msvQHAIAboutDialog.h"
-//#include "msvVTKCompositeActor.h"
+#include "msvVTKCompositeActor.h"
 //#include "msvVTKCompositePainter.h"
 #include "msvVTKLODWidget.h"
 #include "msvVTKProp3DButtonRepresentation.h"
@@ -68,9 +68,9 @@ protected:
   // Pipeline
   vtkSmartPointer<msvVTKXMLMultiblockLODReader> lodReader;
   vtkSmartPointer<vtkCompositePolyDataMapper2> lodMapper;
-  vtkSmartPointer<vtkActor> lodActor;
-
+  vtkSmartPointer<msvVTKCompositeActor> lodActor;
   vtkSmartPointer<msvVTKLODWidget> lodWidget;
+
 public:
   msvQHAIMainWindowPrivate(msvQHAIMainWindow& object);
   ~msvQHAIMainWindowPrivate();
@@ -114,8 +114,8 @@ msvQHAIMainWindowPrivate::msvQHAIMainWindowPrivate(msvQHAIMainWindow& object)
   //vtkDefaultPainter::SafeDownCast(this->lodMapper->GetPainter())->SetCompositePainter(
   //  compositePainter);
 
-  //this->lodActor = vtkSmartPointer<msvVTKCompositeActor>::New();
-  this->lodActor = vtkSmartPointer<vtkActor>::New();
+  this->lodActor = vtkSmartPointer<msvVTKCompositeActor>::New();
+  //this->lodActor = vtkSmartPointer<vtkActor>::New();
   this->lodActor->SetMapper(lodMapper.GetPointer());
   this->threeDRenderer->AddActor(lodActor);
 
@@ -138,10 +138,8 @@ msvQHAIMainWindowPrivate::~msvQHAIMainWindowPrivate()
 //------------------------------------------------------------------------------
 void msvQHAIMainWindowPrivate::clear()
 {
-  Q_Q(msvQHAIMainWindow);
-
-  this->lodReader->SetFileName("");  // clean up the reader
-  this->update(); // update the pipeline
+  this->lodReader->SetFileName(""); // clean up the reader
+  this->update();                   // update the pipeline
 }
 
 //------------------------------------------------------------------------------
@@ -230,7 +228,8 @@ void msvQHAIMainWindowPrivate::updateUi()
 }
 
 //------------------------------------------------------------------------------
-void msvQHAIMainWindowPrivate::updateItem(QTreeWidgetItem* item, vtkDataObject* dataObject)
+void msvQHAIMainWindowPrivate::updateItem(QTreeWidgetItem* item,
+                                          vtkDataObject* dataObject)
 {
   if (!dataObject)
     {
@@ -283,16 +282,18 @@ void msvQHAIMainWindowPrivate::updateItem(QTreeWidgetItem* item, vtkDataObject* 
     item->setText(1, QString::number(polyData->GetNumberOfPolys()));
     }
 
-  /*--------------------------------------------------------------------------*/
+  //--------------------------------------------------------------------------
   // CompositeDataIterator
-  /*--------------------------------------------------------------------------
-  vtkCompositeDataIterator* it = dataSet->NewIterator();
+  //--------------------------------------------------------------------------
+  /*vtkCompositeDataSet* compositeDataSet =
+    vtkCompositeDataSet::SafeDownCast(dataObject);
+  vtkCompositeDataIterator* it = compositeDataSet->NewIterator();
   it->InitTraversal ();
   if (!it)
     {
     std::cerr << "Error: vtkMultiBlockDataSet = null"
               << std::endl;
-    return EXIT_FAILURE;
+    return;
     }
 
   while ( it->IsDoneWithTraversal() == 0 )
@@ -300,8 +301,7 @@ void msvQHAIMainWindowPrivate::updateItem(QTreeWidgetItem* item, vtkDataObject* 
     std::cout << "Active Data [FlatIndex]: "
               << it->GetCurrentFlatIndex() << std::endl;
     it->GoToNextItem();
-    }
-  */
+    }*/
 }
 
 //------------------------------------------------------------------------------

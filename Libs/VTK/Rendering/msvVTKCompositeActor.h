@@ -42,6 +42,8 @@ public:
   vtkTypeMacro(msvVTKCompositeActor,vtkActor);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  virtual void Render(vtkRenderer* renderer, vtkMapper* mapper);
+
   // Description:
   //
   void SetCompositeProperty(vtkCompositeDataIterator* iter, vtkProperty* prop);
@@ -53,13 +55,15 @@ protected:
   msvVTKCompositeActor();
   ~msvVTKCompositeActor();
 
+  vtkActor *Device;
+
   unsigned int CurrentCompositeIndex;
   struct CompositeProperty;
   CompositeProperty* RootProperty;
 
 private:
-  msvVTKCompositeActor(const msvVTKCompositeActor&);  //Not implemented
-  void operator=(const msvVTKCompositeActor&);  //Not implemented
+  msvVTKCompositeActor(const msvVTKCompositeActor&); //Not implemented
+  void operator=(const msvVTKCompositeActor&);       //Not implemented
 };
 
 #endif

@@ -24,18 +24,23 @@
 #include "vtkCompositeDataSetInternals.h"
 #include "vtkInformation.h"
 #include "vtkMapper.h"
+#include "vtkMatrix4x4.h"
 #include "vtkNew.h"
 #include "vtkObjectFactory.h"
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
 #include "vtkSmartPointer.h"
+#include "vtkTexture.h"
+
 
 #include <vector>
 #include <utility>
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 struct msvVTKCompositeActor::CompositeProperty
 {
+  // Create mapping with property --
+  // Return on demand the property corresponding to the index (see reader)
   typedef std::vector<CompositeProperty>::iterator CompositePropertyIterator;
   vtkProperty* GetProperty(const CompositePropertyIterator& iter);
   vtkProperty* GetProperty(const vtkCompositeDataSetIndex& index);
@@ -44,16 +49,18 @@ struct msvVTKCompositeActor::CompositeProperty
   std::vector<CompositeProperty> Children;
 };
 
-//-------------------------------------------------------------------------
-vtkProperty* msvVTKCompositeActor::CompositeProperty::GetProperty(const CompositePropertyIterator& iter)
+//------------------------------------------------------------------------------
+vtkProperty* msvVTKCompositeActor::CompositeProperty::
+GetProperty(const CompositePropertyIterator& iter)
 {
   // todo
   //if (iter
   return 0;
 }
 
-//-------------------------------------------------------------------------
-vtkProperty* msvVTKCompositeActor::CompositeProperty::GetProperty(const vtkCompositeDataSetIndex& index)
+//------------------------------------------------------------------------------
+vtkProperty* msvVTKCompositeActor::CompositeProperty::
+GetProperty(const vtkCompositeDataSetIndex& index)
 {
   vtkProperty* prop = this->Property;
   //const unsigned int indexSize = index.size()
@@ -64,45 +71,96 @@ vtkProperty* msvVTKCompositeActor::CompositeProperty::GetProperty(const vtkCompo
   return prop;
 }
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 vtkStandardNewMacro(msvVTKCompositeActor);
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 msvVTKCompositeActor::msvVTKCompositeActor()
 {
+  // get a hardware dependent actor and mappers
+  this->Device = vtkActor::New();
+  vtkMatrix4x4 *m = vtkMatrix4x4::New();
+  this->Device->SetUserMatrix(m);
+  m->Delete();
+
   this->CurrentCompositeIndex = 0;
   this->RootProperty = new CompositeProperty;
   this->RootProperty->Property.TakeReference(this->GetProperty());
+
+  //this->DebugOn();
 }
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 msvVTKCompositeActor::~msvVTKCompositeActor()
 {
+  this->Device->Delete();
+  this->Device = NULL;
+
   delete this->RootProperty;
 }
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void msvVTKCompositeActor::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
 
-//-------------------------------------------------------------------------
-void msvVTKCompositeActor::SetCurrentCompositeIndex(vtkCompositeDataIterator* iter)
+//------------------------------------------------------------------------------
+void msvVTKCompositeActor::Render(vtkRenderer *ren, vtkMapper *vtkNotUsed(m))
+{
+
+  if (this->Mapper == NULL)
+    {
+    vtkErrorMacro("No mapper for actor.");
+    return;
+    }
+
+  // render the property
+  if (!this->Property)
+    {
+    // force creation of a property
+    this->GetProperty();
+    }
+  this->Property->Render(this, ren);
+  if (this->BackfaceProperty)
+    {
+    this->BackfaceProperty->BackfaceRender(this, ren);
+    this->Device->SetBackfaceProperty(this->BackfaceProperty);
+    }
+  this->Device->SetProperty(this->Property);
+
+  // render the texture
+  if (this->Texture)
+    {
+    this->Texture->Render(ren);
+    }
+
+  // make sure the device has the same matrix
+  this->GetMatrix(this->Device->GetUserMatrix());
+
+  // Store information on time it takes to render.
+  // We might want to estimate time from the number of polygons in mapper.
+  this->Device->Render(ren, this->Mapper);
+  this->EstimatedRenderTime = this->Mapper->GetTimeToDraw();
+}
+
+//------------------------------------------------------------------------------
+void msvVTKCompositeActor::
+SetCurrentCompositeIndex(vtkCompositeDataIterator* iter)
 {
   this->CurrentCompositeIndex = iter->GetCurrentFlatIndex();
   this->SetProperty(this->GetCompositeProperty(iter));
 }
 
-//-------------------------------------------------------------------------
-vtkProperty* msvVTKCompositeActor::GetCompositeProperty(vtkCompositeDataIterator* iter)
+//------------------------------------------------------------------------------
+vtkProperty* msvVTKCompositeActor::
+GetCompositeProperty(vtkCompositeDataIterator* iter)
 {
   return 0;
 }
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void msvVTKCompositeActor
 ::SetCompositeProperty(vtkCompositeDataIterator* iter,
                        vtkProperty* prop)
-{
-}
+{}

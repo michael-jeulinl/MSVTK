@@ -27,7 +27,7 @@
 // CTK includes
 #include <ctkVTKObject.h>
 
-// ECG includes
+// HAI includes
 #include "msvHAIExport.h"
 
 class QTreeWidgetItem;

@@ -621,7 +621,8 @@ void msvVTKXMLMultiblockLODReader::SetDefaultLOD(unsigned int lod)
 {
   this->Internal->CurrentFlatIndex = 0;
   this->Internal->UpdateNodesFromDefaultLOD(this->GetPrimaryElement(),
-                                            this->Internal->CurrentLODTreeLevel, lod);
+                                            this->Internal->CurrentLODTreeLevel,
+                                            lod);
 
   this->Internal->DefaultLOD = lod;
   this->Modified();
