@@ -147,7 +147,8 @@ msvVTKXMLMultiblockLODReaderInternal::
 }
 
 //------------------------------------------------------------------------------
-void msvVTKXMLMultiblockLODReaderInternal::InitListUpdateNodes(vtkXMLDataElement* primaryElement)
+void msvVTKXMLMultiblockLODReaderInternal::
+InitListUpdateNodes(vtkXMLDataElement* primaryElement)
 {
   unsigned int numberOfNodes = msvVTKXMLMultiblockLODReaderInternal::
     CountNumberOfNodes(primaryElement);
@@ -365,9 +366,9 @@ msvVTKXMLMultiblockLODReader::~msvVTKXMLMultiblockLODReader()
 
 //------------------------------------------------------------------------------
 int msvVTKXMLMultiblockLODReader
-::RequestInformation(vtkInformation *request,
-                     vtkInformationVector **vtkNotUsed(inputVector),
-                     vtkInformationVector *outputVector)
+::RequestInformation(vtkInformation* request,
+                     vtkInformationVector** vtkNotUsed(inputVector),
+                     vtkInformationVector* outputVector)
 {
   return Superclass::RequestInformation(request, 0, outputVector);
 }
@@ -388,6 +389,50 @@ RequestData(vtkInformation* request,
 
   this->Internal->CurrentFlatIndex = 0;
   return Superclass::RequestData(request, inputVector, outputVector);
+}
+
+//------------------------------------------------------------------------------
+int msvVTKXMLMultiblockLODReader::
+RequestUpdateExtent(vtkInformation* vtkNotUsed(rqst),
+                    vtkInformationVector** vtkNotUsed(inputVector),
+                    vtkInformationVector* outputVector)
+{
+  if (outputVector->GetInformationObject(0)->
+        Has(vtkCompositeDataPipeline::UPDATE_COMPOSITE_INDICES()))
+    {
+    std::cout << "Contain Composite Indices Update" << std::endl;
+
+    int length =
+      outputVector->GetInformationObject(0)->Length(
+        vtkCompositeDataPipeline::UPDATE_COMPOSITE_INDICES());
+
+    int* idx = outputVector->GetInformationObject(0)->Get(
+      vtkCompositeDataPipeline::UPDATE_COMPOSITE_INDICES());
+
+    for (int i = 0; i < length; ++i)
+        std::cout << "Indice to Update: " << idx[i] << std::endl;
+    }
+
+  return 1;
+}
+
+//------------------------------------------------------------------------------
+int msvVTKXMLMultiblockLODReader::
+ProcessRequest(vtkInformation *request,
+               vtkInformationVector **inputVector,
+               vtkInformationVector *outputVector)
+{
+  // Let the reader process anything we did not handle ourselves.
+  int retVal = Superclass::ProcessRequest(request,
+                                          inputVector,
+                                          outputVector);
+  // Additional processing requried by us.
+  if (request->Has(vtkStreamingDemandDrivenPipeline::REQUEST_UPDATE_EXTENT()))
+    {
+    this->RequestUpdateExtent(request, inputVector, outputVector);
+    }
+
+  return retVal;
 }
 
 //------------------------------------------------------------------------------
@@ -454,7 +499,8 @@ ReadComposite(vtkXMLDataElement* element,
       else
         {
         // We clean its reader if the node got one;
-        // We should put the function within the set but would break the optimization -- Check
+        // We should put the function within the set but
+        //it would break the optimization -- To Check
         if (this->Internal->NodesInfos[this->Internal->CurrentFlatIndex].Reader)
           {
           this->Internal->NodesInfos[this->Internal->CurrentFlatIndex].Reader = 0;

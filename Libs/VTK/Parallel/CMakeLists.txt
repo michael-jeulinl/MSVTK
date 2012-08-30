@@ -52,6 +52,8 @@ set(msvVTKParallel_SRCS
   msvVTKXMLMultiblockLODReader.cxx
   msvVTKFileSeriesReader.cxx
   msvVTKPolyDataFileSeriesReader.cxx
+  msvVTKMultiBlockDataSelector.cxx
+  msvVTKMultiBlockDataIterator.cxx
   )
 
 # Abstract/pure virtual classes

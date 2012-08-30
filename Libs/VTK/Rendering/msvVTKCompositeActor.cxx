@@ -32,34 +32,20 @@
 #include "vtkSmartPointer.h"
 #include "vtkTexture.h"
 
-
 #include <vector>
 #include <utility>
 
 //------------------------------------------------------------------------------
-struct msvVTKCompositeActor::CompositeProperty
-{
-  // Create mapping with property --
-  // Return on demand the property corresponding to the index (see reader)
-  typedef std::vector<CompositeProperty>::iterator CompositePropertyIterator;
-  vtkProperty* GetProperty(const CompositePropertyIterator& iter);
-  vtkProperty* GetProperty(const vtkCompositeDataSetIndex& index);
-
-  vtkSmartPointer<vtkProperty> Property;
-  std::vector<CompositeProperty> Children;
-};
-
-//------------------------------------------------------------------------------
-vtkProperty* msvVTKCompositeActor::CompositeProperty::
+/*vtkProperty* msvVTKCompositeActor::
 GetProperty(const CompositePropertyIterator& iter)
 {
   // todo
   //if (iter
   return 0;
-}
+}*/
 
 //------------------------------------------------------------------------------
-vtkProperty* msvVTKCompositeActor::CompositeProperty::
+/*vtkProperty* msvVTKCompositeActor::CompositeProperty::
 GetProperty(const vtkCompositeDataSetIndex& index)
 {
   vtkProperty* prop = this->Property;
@@ -69,7 +55,7 @@ GetProperty(const vtkCompositeDataSetIndex& index)
   //  unsigned int childIndex = index[i];
   //  if (!compositeProperty->Children.size() <
   return prop;
-}
+}*/
 
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(msvVTKCompositeActor);
@@ -83,10 +69,7 @@ msvVTKCompositeActor::msvVTKCompositeActor()
   this->Device->SetUserMatrix(m);
   m->Delete();
 
-  this->CurrentCompositeIndex = 0;
-  this->RootProperty = new CompositeProperty;
-  this->RootProperty->Property.TakeReference(this->GetProperty());
-
+  this->CurrentCompositeIndex = -1;
   //this->DebugOn();
 }
 
@@ -94,9 +77,6 @@ msvVTKCompositeActor::msvVTKCompositeActor()
 msvVTKCompositeActor::~msvVTKCompositeActor()
 {
   this->Device->Delete();
-  this->Device = NULL;
-
-  delete this->RootProperty;
 }
 
 //------------------------------------------------------------------------------
@@ -149,18 +129,18 @@ void msvVTKCompositeActor::
 SetCurrentCompositeIndex(vtkCompositeDataIterator* iter)
 {
   this->CurrentCompositeIndex = iter->GetCurrentFlatIndex();
-  this->SetProperty(this->GetCompositeProperty(iter));
+  //this->SetProperty(this->GetCompositeProperty(iter));
 }
 
 //------------------------------------------------------------------------------
-vtkProperty* msvVTKCompositeActor::
+/*vtkProperty* msvVTKCompositeActor::
 GetCompositeProperty(vtkCompositeDataIterator* iter)
 {
   return 0;
-}
+}*/
 
 //------------------------------------------------------------------------------
-void msvVTKCompositeActor
+/*void msvVTKCompositeActor
 ::SetCompositeProperty(vtkCompositeDataIterator* iter,
                        vtkProperty* prop)
-{}
+{}*/

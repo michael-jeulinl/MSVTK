@@ -55,7 +55,7 @@ protected:
   //processes the registered events
   static void SelectAction(vtkAbstractWidget*);
   static void EndSelectAction(vtkAbstractWidget*);
-  static void MouseHoverAction(vtkAbstractWidget *w);
+  static void MouseHoverAction(vtkAbstractWidget* w);
 
   // Special internal methods to support subclasses handling events.
   // If a non-zero value is returned, the subclass is handling the event.
@@ -66,11 +66,15 @@ protected:
   // helper methods for cursoe management
   virtual void SetCursor(int State);
 
-//BTX
   //widget state
   int WidgetState;
-  enum _WidgetState{Start=0, Selectable, Selected};
-//ETX
+  enum WidgetState
+  {
+    Start=0,
+    Selectable,
+    Selected
+  };
+
   int SelectX;
   int SelectY;
 

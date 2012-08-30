@@ -19,7 +19,7 @@
 ==============================================================================*/
 
 // By default the LOD setted is clampled to the closest available
-// CAUTION: please do not try to introduce optimization within the three searc
+// CAUTION: please do not try to introduce optimization within the three search
 // as it will break the FlatIndex
 
 #ifndef __msvVTKXMLMultiblockLODReader_h
@@ -30,10 +30,10 @@
 
 #include "vtkXMLMultiBlockDataReader.h"
 
-
 class msvVTKXMLMultiblockLODReaderInternal;
 
-class MSV_VTK_PARALLEL_EXPORT msvVTKXMLMultiblockLODReader : public vtkXMLMultiBlockDataReader
+class MSV_VTK_PARALLEL_EXPORT msvVTKXMLMultiblockLODReader :
+  public vtkXMLMultiBlockDataReader
 {
 public:
   static msvVTKXMLMultiblockLODReader* New();
@@ -48,8 +48,12 @@ public:
   // Restore each piece to the LOD by default
   void RestoreDefaultLOD();
 
-  // Givent the  number Index of a piece, request him to change its LOD.
-  void SetPieceLOD(int,unsigned int);
+  // Givent the number Index of a piece, request him to change its LOD.
+  void SetPieceLOD(int, unsigned int);
+
+  virtual int ProcessRequest(vtkInformation *request,
+                             vtkInformationVector **inputVector,
+                             vtkInformationVector *outputVector);
 
 protected:
   msvVTKXMLMultiblockLODReader();
@@ -58,8 +62,9 @@ protected:
   // Read the XML element for the subtree of a the composite dataset.
   // dataSetIndex is used to rank the leaf nodes in an inorder traversal.
   virtual void ReadComposite(vtkXMLDataElement* element,
-    vtkCompositeDataSet* composite, const char* filePath,
-    unsigned int &dataSetIndex);
+                             vtkCompositeDataSet* composite,
+                             const char* filePath,
+                             unsigned int &dataSetIndex);
 
   virtual int RequestInformation(vtkInformation*,
                                  vtkInformationVector**,
@@ -68,6 +73,12 @@ protected:
   virtual int RequestData(vtkInformation *request,
                           vtkInformationVector **inputVector,
                           vtkInformationVector *outputVector);
+
+  // Description:
+  // Performs upstream requests to the reader
+  virtual int RequestUpdateExtent(vtkInformation*,
+                                  vtkInformationVector**,
+                                  vtkInformationVector*);
 
   virtual vtkXMLReader* GetReaderOfType(const char* type);
 

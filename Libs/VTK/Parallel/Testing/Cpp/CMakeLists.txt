@@ -4,6 +4,7 @@ set(KIT_TEST_SRCS
   msvVTKFileSeriesReaderTest1.cxx
   msvVTKPolyDataFileSeriesReaderTest1.cxx
   msvVTKXMLMultiblockLODReaderTest1.cxx
+  msvVTKFileSeriesReaderPipelineTest.cxx
 #  msvVTKCompositeFileSeriesReaderTest1.cxx
   )
 
@@ -29,4 +30,5 @@ endmacro()
 SIMPLE_TEST( msvVTKFileSeriesReaderTest1 )
 SIMPLE_TEST( msvVTKPolyDataFileSeriesReaderTest1 )
 SIMPLE_TEST( msvVTKXMLMultiblockLODReaderTest1 )
+SIMPLE_TEST( msvVTKFileSeriesReaderPipelineTest )
 #SIMPLE_TEST( msvVTKCompositeFileSeriesReaderTest1 )

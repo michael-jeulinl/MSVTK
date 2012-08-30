@@ -115,7 +115,6 @@ msvQHAIMainWindowPrivate::msvQHAIMainWindowPrivate(msvQHAIMainWindow& object)
   //  compositePainter);
 
   this->lodActor = vtkSmartPointer<msvVTKCompositeActor>::New();
-  //this->lodActor = vtkSmartPointer<vtkActor>::New();
   this->lodActor->SetMapper(lodMapper.GetPointer());
   this->threeDRenderer->AddActor(lodActor);
 
@@ -216,7 +215,7 @@ void msvQHAIMainWindowPrivate::updateUi()
     return;
     }
 
-//  dataSet->Print(std::cout);
+  //dataSet->Print(std::cout);
 
   QTreeWidgetItem* rootItem = new QTreeWidgetItem();
   rootItem->setText(0, QFileInfo(this->lodReader->GetFileName()).baseName());
@@ -235,6 +234,7 @@ void msvQHAIMainWindowPrivate::updateItem(QTreeWidgetItem* item,
     {
     item->setText(1, "not loaded");
     }
+
   if (vtkCompositeDataSet::SafeDownCast(dataObject))
     {
     vtkCompositeDataSet* compositeDataSet =
@@ -248,10 +248,12 @@ void msvQHAIMainWindowPrivate::updateItem(QTreeWidgetItem* item,
       {
       type = "LOD";
       }
+
     vtkCompositeDataIterator* it = compositeDataSet->NewIterator();
     it->SetVisitOnlyLeaves(0);
     it->SetTraverseSubTree(0);
     it->SetSkipEmptyNodes(0);
+
     unsigned int childIndex = 0;
     int usedLODIndex = -1;
     for (it->InitTraversal(); !it->IsDoneWithTraversal(); it->GoToNextItem())
@@ -260,12 +262,14 @@ void msvQHAIMainWindowPrivate::updateItem(QTreeWidgetItem* item,
       QTreeWidgetItem* childItem = new QTreeWidgetItem();
       item->addChild(childItem);
       childItem->setText(0, QString("%1 #%2").arg(type).arg(childIndex++));
+
       this->updateItem(childItem, childObject);
       if (childObject != 0)
         {
         usedLODIndex = childIndex -1;
         }
       }
+
     if (childIndex == 3)
       {
       item->setData(1, Qt::DisplayRole, QVariant(usedLODIndex));

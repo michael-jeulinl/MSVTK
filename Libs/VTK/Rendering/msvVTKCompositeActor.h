@@ -46,8 +46,9 @@ public:
 
   // Description:
   //
-  void SetCompositeProperty(vtkCompositeDataIterator* iter, vtkProperty* prop);
-  vtkProperty* GetCompositeProperty(vtkCompositeDataIterator* iter);
+
+  //void SetCompositeProperty(vtkCompositeDataIterator* iter, vtkProperty* prop);
+  //vtkProperty* GetCompositeProperty(vtkCompositeDataIterator* iter);
 
   void SetCurrentCompositeIndex(vtkCompositeDataIterator* iter);
 
@@ -55,11 +56,10 @@ protected:
   msvVTKCompositeActor();
   ~msvVTKCompositeActor();
 
-  vtkActor *Device;
+  vtkActor* Device;
 
   unsigned int CurrentCompositeIndex;
-  struct CompositeProperty;
-  CompositeProperty* RootProperty;
+
 
 private:
   msvVTKCompositeActor(const msvVTKCompositeActor&); //Not implemented
